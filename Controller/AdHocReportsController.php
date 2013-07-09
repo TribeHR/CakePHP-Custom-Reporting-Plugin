@@ -493,7 +493,7 @@ class AdHocReportsController extends AdHocReportingAppController {
 		$displayForeignKeys = Configure::read('AdHocReporting.displayForeignKeys');
 		$globalFieldBlacklist = Configure::read('AdHocReporting.globalFieldBlacklist');
 		$modelFieldBlacklist = Configure::read('AdHocReporting.modelFieldBlacklist');
-		
+		$allowedForeignKeys = Configure::read('AdHocReporting.foreignKeyWhitelist');
 
 		$this->loadModel($modelClass);
 		$modelSchema = $this->{$modelClass}->schema();
@@ -514,7 +514,12 @@ class AdHocReportsController extends AdHocReportingAppController {
 		if (isset($displayForeignKeys) && $displayForeignKeys == false) { 
 			foreach($modelSchema as $field => $value) {
 				if ( substr($field,-3) == '_id' ) {
-					unset($modelSchema[$field]);
+					// we don't remove this field if it's specially whitelisted as an allowed foreign key
+					if (!empty($allowedForeignKeys)){
+						if (!in_array($field, $allowedForeignKeys)){
+							unset($modelSchema[$field]);
+						}
+					}
 				}
 			}
 		}
