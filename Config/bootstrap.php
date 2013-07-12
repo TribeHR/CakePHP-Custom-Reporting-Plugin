@@ -11,13 +11,6 @@
  */
 Configure::write('AdHocReporting.displayForeignKeys', false);
 
-if (!is_array(Configure::read('AdHocReporting.foreignKeyWhitelist'))) {
-	Configure::write('AdHocReporting.foreignKeyWhitelist', array(
-		'allowed_id',
-		'artificial_id',
-		'publicly_meaningful_id'
-	));
-}
 
 
 /**
