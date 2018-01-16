@@ -2,10 +2,11 @@
 /**
  * Copyright (c) 2013 TribeHR Corp - http://tribehr.com
  * Copyright (c) 2012 Luis E. S. Dias - www.smartbyte.com.br
- * 
+ *
  * Licensed under The MIT License. See LICENSE file for details.
  * Redistributions of files must retain the above copyright notice.
  */
+echo $this->Html->script(array('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'));
 ?>
 
 <div class="reportDetails">
@@ -19,53 +20,53 @@
 </div>
 
 <div class="reportTable">
-    <?php 
-    $counter = 0;
-    $columns = 0;
-    ?>     
-    <?php if (!empty($reportData)):?>
-    <table cellpadding = "0" cellspacing = "0" class="report" width="<?php echo $tableWidth;?>">
-        <tr class="header">
-                <?php foreach ($fieldList as $field): ?>
-                <th>
-                <?php
-                $columns++;
-                $displayField = substr($field, strpos($field, '.')+1);
-                $displayField = str_replace('_', ' ', $displayField);
-                $displayField = ucfirst($displayField);
-                echo $displayField; 
-                ?>
-                </th>
-                <?php endforeach; ?>
-        </tr>
-        <?php 
-        $i = 0;        
-        foreach ($reportData as $reportItem): 
-            $counter++;
-            $class = null;
-            if ($i++ % 2 == 0) {
-                $class = ' altrow';
-            } 
-        ?>
-            <tr class="body<?php echo $class;?>">
-                <?php foreach ($fieldList as $field): ?>
-                    <td>
-                    <?php                     
-                    $params = explode('.',$field);
-                    if ( $fieldsType[$field] == 'float') {
-                        echo h($reportItem[$params[0]][$params[1]]);
-                    }                        
-                    else
-                        echo h($reportItem[$params[0]][$params[1]]);
-                    ?>
-                    </td>
-                <?php endforeach; ?>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-    <?php if ( $showRecordCounter ) { ?>    
-        <div class="counter">Total Records: <?php echo $counter;?></div>
-    <?php } ?>
-    <div class="timestamp"><?php echo __('Report Generated') . ' : ' . date('Y-m-d H:i:s'); ?></div>
-    <?php endif; ?>
+	<?php
+	$counter = 0;
+
+	if (!empty($reportData)) { ?>
+	<table cellpadding = "0" cellspacing = "0" class="report" width="<?php echo $tableWidth;?>">
+		<tr class="header">
+			<?php foreach ($fieldList as $field) {
+				$displayField = substr($field, strpos($field, '.')+1);
+				$displayField = str_replace('_', ' ', $displayField);
+				$displayField = ucfirst($displayField);
+
+				// column width is either the actual width (can cause issues for booleans), or 50, or (length * 8) to prevent overflow
+				$columnWidth = max(array($tableColumnWidth[$field], 50, strlen($displayField) * 8));
+			?>
+				<th width="<?php echo $columnWidth; ?>"><?php echo $displayField; ?></th>
+			<?php } ?>
+		</tr>
+		<?php
+		foreach ($reportData as $reportItem) {
+			$class = null;
+			if ($counter++ % 2 == 0) {
+				$class = ' altrow';
+			}
+		?>
+			<tr class="body<?php echo $class;?>">
+				<?php foreach ($fieldList as $field) {
+					$params = explode('.',$field);
+					$value = h($reportItem[$params[0]][$params[1]]);
+				?>
+					<td><?php echo $value; ?></td>
+				<?php } ?>
+			</tr>
+		<?php } ?>
+	</table>
+	<?php if ( $showRecordCounter ) { ?>
+		<div class="counter">Total Records: <?php echo $counter;?></div>
+	<?php } ?>
+	<div class="timestamp"><?php echo __('Report Generated') . ' : ' . date('Y-m-d H:i:s'); ?></div>
+	<?php } ?>
 </div>
+
+<script>
+	$(function() {
+		// toggle text wrapping on hover to see hidden overflown content
+		$('tr.body td').hover(
+			function() { $( this ).css('white-space', 'normal'); },
+			function() { $( this ).css('white-space', 'nowrap'); }
+		);
+	});
+</script>
