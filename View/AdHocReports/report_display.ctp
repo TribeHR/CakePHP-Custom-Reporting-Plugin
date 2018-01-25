@@ -2,10 +2,11 @@
 /**
  * Copyright (c) 2013 TribeHR Corp - http://tribehr.com
  * Copyright (c) 2012 Luis E. S. Dias - www.smartbyte.com.br
- * 
+ *
  * Licensed under The MIT License. See LICENSE file for details.
  * Redistributions of files must retain the above copyright notice.
  */
+echo $this->Html->script(array('https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'));
 ?>
 
 <div class="reportDetails">
@@ -18,54 +19,89 @@
 	<div class="timestamp">Report Generated : <strong><?php echo date('Y-m-d H:i:s'); ?></strong></div>
 </div>
 
+<span style="display: <?php echo $overflow ? 'block' : 'none'?>">
+	<input type="checkbox" id="expandCollapseAll">
+	<label for="expandCollapseAll" data-collapse="<?php echo $labels['collapse'];?>" data-expand="<?php echo $labels['expand'];?>">
+		<?php echo $labels['expand'];?>
+	</label>
+</span>
 <div class="reportTable">
-    <?php 
-    $counter = 0;
-    $columns = 0;
-    ?>     
-    <?php if (!empty($reportData)):?>
-    <table cellpadding = "0" cellspacing = "0" class="report" width="<?php echo $tableWidth;?>">
-        <tr class="header">
-                <?php foreach ($fieldList as $field): ?>
-                <th>
-                <?php
-                $columns++;
-                $displayField = substr($field, strpos($field, '.')+1);
-                $displayField = str_replace('_', ' ', $displayField);
-                $displayField = ucfirst($displayField);
-                echo $displayField; 
-                ?>
-                </th>
-                <?php endforeach; ?>
-        </tr>
-        <?php 
-        $i = 0;        
-        foreach ($reportData as $reportItem): 
-            $counter++;
-            $class = null;
-            if ($i++ % 2 == 0) {
-                $class = ' altrow';
-            } 
-        ?>
-            <tr class="body<?php echo $class;?>">
-                <?php foreach ($fieldList as $field): ?>
-                    <td>
-                    <?php                     
-                    $params = explode('.',$field);
-                    if ( $fieldsType[$field] == 'float') {
-                        echo h($reportItem[$params[0]][$params[1]]);
-                    }                        
-                    else
-                        echo h($reportItem[$params[0]][$params[1]]);
-                    ?>
-                    </td>
-                <?php endforeach; ?>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-    <?php if ( $showRecordCounter ) { ?>    
-        <div class="counter">Total Records: <?php echo $counter;?></div>
-    <?php } ?>
-    <div class="timestamp"><?php echo __('Report Generated') . ' : ' . date('Y-m-d H:i:s'); ?></div>
-    <?php endif; ?>
+	<table cellpadding = "0" cellspacing = "0" class="report" width="<?php echo array_sum($width);?>">
+		<?php
+			$rows = array(
+				'head' => array('class' => 'header', 'colType' => 'th'),
+				'body' => array('class' => 'body', 'colType' => 'td'),
+			);
+			foreach($data as $ridx => $rowData) {
+				$row = $ridx ? $rows['body'] : $rows['head'];
+
+				$rowClass = $row['class'] . ($ridx % 2 ? ' altrow' : '');
+				echo sprintf('<tr class="%s">', $rowClass);
+
+				foreach ($rowData as $cidx => $colData) {
+					// width is defined for header cols only
+					$colWidth = !$ridx ? sprintf(' width="%s"', $width[$cidx]) : '';
+					echo "<{$row['colType']}{$colWidth}>{$colData}</{$row['colType']}>";
+				}
+				echo '</tr>';
+			}
+		?>
+	</table>
+	<?php if ( $showRecordCounter ) { ?>
+		<div class="counter">Total Records: <?php echo $ridx; ?></div>
+	<?php } ?>
+	<div class="timestamp"><?php echo __('Report Generated') . ' : ' . date('Y-m-d H:i:s'); ?></div>
 </div>
+
+<script>
+	$(function() {
+		/* Logic related to expanding/collapsing columns with long, overflowing text */
+		var expandCollapse = {
+			checkbox: $('#expandCollapseAll'),
+			label: $('label[for=expandCollapseAll'),
+			cells: $('tr.body td'),
+
+			/* Expand - don't hide the overflowing text*/
+			expand: function(target) {
+				target.css('white-space', 'normal');
+			},
+			/* Collapse - hide the overflowing text */
+			collapse: function(target) {
+				target.css('white-space', 'nowrap');
+			},
+			/* Enable/disable expand/collapse on mouse hover */
+			hover: {
+				on: function (target) {
+					target.hover(
+						function () { expandCollapse.expand($(this)); },
+						function () { expandCollapse.collapse($(this)); },
+					);
+				},
+				off: function (target) {
+					target.off('hover');
+				}
+			},
+			init: function() {
+				/* Init expand/collapse ALL checkbox */
+				expandCollapse.checkbox.change(function() {
+					if ($(this).is(':checked')) {
+						expandCollapse.label.text(expandCollapse.label.attr('data-collapse'));
+						expandCollapse.expand(expandCollapse.cells);
+						// when cells are expanded, prevent expand/collapse on mouse hover
+						expandCollapse.hover.off(expandCollapse.cells);
+					} else {
+						expandCollapse.label.text(expandCollapse.label.attr('data-expand'));
+						expandCollapse.collapse(expandCollapse.cells);
+						// when cells are collapsed, enable expand/collapse on mouse hover
+						expandCollapse.hover.on(expandCollapse.cells);
+					}
+				});
+
+				/* Init expand/collapse on mouse hover */
+				expandCollapse.hover.on(expandCollapse.cells);
+			}
+		};
+
+		expandCollapse.init();
+	});
+</script>

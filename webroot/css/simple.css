@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2013 TribeHR Corp - http://tribehr.com
- * 
+ *
  * Licensed under The MIT License. See LICENSE file for details.
  * Redistributions of files must retain the above copyright notice.
  */
 
 body {
-    font-family: Arial;    
+    font-family: Arial;
 }
 
 img {
@@ -34,80 +34,36 @@ h2 {
     border-radius: 2px;
 }
 
-.reportTable .reportName {
-    font-size: 19pt; 
-	font-weight: bold;
-    color: #333333;
-}
+/* .reportTable .reportName inherit */
 
-.reportTable .timestamp {
-    margin-top: 15px;
-    font-size: 8pt; 
-	font-weight: normal;
-    color: #333333;
-    float: left;  
-    clear: both;      
-}
+/* .reportTable .timestamp inherit */
 
-
-.reportTable .report
-{
-    margin: 0px;
-    padding: 0px;
-    border-top-width: 0px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
+.reportTable .report {
+    border-width: 1px;
     border-style: solid;
-    border-color: #cccccc;
-    border-collapse: collapse;
-    font-size: 11pt;
-	font-weight: bold;
-    color: #ffffff;
+    /* rest inherit */
 }
 
-.reportTable .report tr.header th
-{
+/* common to header and rest */
+.reportTable .report tr.header th,
+.reportTable .report tr.body td,
+.reportTable .report tr.footer td {
+    border: 1px solid #CCCCCC;
+    font-weight: normal;
+    text-align: left;
+}
+
+/* header specific */
+.reportTable .report tr.header th {
     background: #f2f2f2;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-style: solid;
-    border-color: #ccc;
     font-size: 10pt;
-	font-weight: normal;
     color: #333;
-    text-align: left;
 }
 
-
-.reportTable .report tr.body td
-{
+/* body/footer specific */
+.reportTable .report tr.body td,
+.reportTable .report tr.footer td {
     background: #FFFFFF;
-    border-top-width: 0px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-style: solid;
-    border-color: #CCCCCC;
-    text-align: left;
     font-size: 9pt;
-	font-weight: normal;
     color: #555555;
-}
-
-.reportTable .report tr.footer td
-{
-    background: #FFFFFF;
-    border-top-width: 0px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-style: solid;
-    border-color: #CCCCCC;
-    font-size: 9pt;
-	font-weight: normal;
-    color: #555555;
-    text-align: left;
 }
