@@ -37,11 +37,7 @@ class SpoutAdapter
                 $dataRow = [];
                 foreach ($fieldList as $field) {
                     $params = explode('.', $field);
-                    if ($fieldsType[$field] == 'float') {
-                        $dataRow[] = $reportItem[$params[0]][$params[1]];
-                    } else {
-                        $dataRow[] = $reportItem[$params[0]][$params[1]];
-                    }
+                    $dataRow[] = $reportItem[$params[0]][$params[1]];
                 }
                 $writer->addRow($dataRow);
             }
