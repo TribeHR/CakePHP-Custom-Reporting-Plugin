@@ -748,9 +748,15 @@ class AdHocReportsController extends AdHocReportingAppController {
 		$this->columnOverflown = $columnOverflown;
 	}
 
-	public function _export2Xls(&$reportData = array(),&$fieldsList=array(), &$fieldsType=array()) {
-		App::import('Vendor', 'AdHocReporting.Excel');
-		$xls = new Excel();
-		$xls->buildXls($reportData, $fieldsList, $fieldsType);
-	}
+    public function _export2Xls(&$reportData = array(),&$fieldsList=array(), &$fieldsType=array()) {
+        if (class_exists('\Box\Spout\Writer\WriterFactory')) {
+            App::import('Vendor', 'AdHocReporting.SpoutAdapter');
+            $xls = new SpoutAdapter();
+        } else {
+            App::import('Vendor', 'AdHocReporting.Excel');
+            $xls = new Excel();
+        }
+
+        $xls->buildXls($reportData, $fieldsList, $fieldsType);
+    }
 }

@@ -43,6 +43,9 @@ If you are using an ACL, add ACO entries for
 - AdHocReporting/AdHocReports/view
 - AdHocReporting/AdHocReports/duplicate
 
+## External dependencies
+If http://opensource.box.com/spout/ library is available it is used for Excel creation. 
+
 ## Credits
 
 This plugin is a fork of the plugin written by Luis Dias from March 11, 2013
